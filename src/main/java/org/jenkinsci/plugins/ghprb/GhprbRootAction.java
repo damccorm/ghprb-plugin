@@ -211,6 +211,17 @@ public class GhprbRootAction implements UnprotectedRootAction {
                              PullRequest anonPr,
                              IssueComment anonComment) {
 
+        if (anonPr == null) {
+            if (annonComment == null) {
+                return;
+            }
+            String body = anonComment.getComment().getBody().toLowerCase();
+            if (!body.contains("run ") && !body.contains("retest this")) {
+                LOGGER.log(level.INFO, "Skipping comment with contents " + body);
+                return;
+            }
+        }
+
         for (final GhprbTrigger trigger : triggers) {
             try {
                 final StartTrigger runner = new StartTrigger();
